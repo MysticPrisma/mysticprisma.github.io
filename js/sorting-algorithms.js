@@ -33,8 +33,10 @@ class Bubble {
   }
 
   update(){
+    var path = window.location.hostname + window.location.pathname + "/img/sorting-algorithms/cube.png";
     var distance = this.x-this.go;
     var velocity = distance-(distance*this.spd);
+    console.log(path);
     if (Math.round(this.x) < Math.round(this.go)) {
       this.x -= velocity;
       if (this.img.src == "https://alangomezpasillas.github.io/img/sorting-algorithms/cube.png") {
@@ -143,6 +145,8 @@ function handleClick(c, e) {
       c.clicked = "less";
     } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 300, 332, 267, 299, rect)) {
       c.clicked = "more";
+    } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 120, 432, 360, 464, rect)) {
+      c.clicked = "credits";
     }
   } else if (c.state == "playing") {
     if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 2, 98, 64, 160, rect)) {
@@ -243,12 +247,13 @@ async function title(ctx, imgTit, objCli, titY, c) {
   }
 }
 
-async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, arr, file, c, n = 10, change = true) {
+async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, imgCre, imgCred, arr, file, c, n = 10, change = true) {
   ctx.fillStyle = "white";
   ctx.textAlign = "left";
   ctx.font = "48px Arial";
   ctx.clearRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
+  ctx.drawImage(imgCre, 120, 432);
   if (c.alg == "bubble"){
     ctx.drawImage(imgBubs, 66, 120);
   } else if (c.alg == "select") {
@@ -527,6 +532,8 @@ async function main() {
   const imgPre = new Image();
   const imgTit = new Image();
   const imgCli = new Image();
+  const imgCre = new Image();
+  const imgCred = new Image();
   const imgBubs = new Image();
   const imgFils = new Image();
   const imgPlay = new Image();
@@ -558,6 +565,8 @@ async function main() {
   imgPre.src = path + "presentation.png";
   imgTit.src = path + "title.png";
   imgCli.src = path + "cli-st.png";
+  imgCre.src = path + "cred.png";
+  imgCred.src = path + "credits.png";
   imgBubs.src = path + "bubble-sort.png";
   imgFils.src = path + "file-select.png";
   imgPlay.src = path + "play.png";
@@ -578,6 +587,8 @@ async function main() {
   await imgPre.decode();
   await imgTit.decode();
   await imgCli.decode();
+  await imgCre.decode();
+  await imgCred.decode();
   await imgBubs.decode();
   await imgFils.decode();
   await imgPlay.decode();
@@ -625,7 +636,7 @@ async function main() {
     objArr.min = -1;
     objArr.nums = new Array();
     objArr.bubs = new Array();
-    await selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, objArr, objFile, objCheck);
+    await selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, imgCre, imgCred, objArr, objFile, objCheck);
     await initPlay(imgBub, imgBub2, imgForu, imgForu2, imgCube, imgCube2, objArr, objCheck);
     objCheck.state = "playing";
     objCheck.paused = true;
