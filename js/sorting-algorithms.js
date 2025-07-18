@@ -33,19 +33,19 @@ class Bubble {
   }
 
   update(){
-    var path = window.location.hostname + window.location.pathname + "/img/sorting-algorithms/cube.png";
+    var path = "https://" + window.location.hostname + window.location.pathname.slice(0,-4) + "img/sorting-algorithms/cube.png";
     var distance = this.x-this.go;
     var velocity = distance-(distance*this.spd);
     console.log(path);
     if (Math.round(this.x) < Math.round(this.go)) {
       this.x -= velocity;
-      if (this.img.src == "https://alangomezpasillas.github.io/img/sorting-algorithms/cube.png") {
+      if (this.img.src == path) {
 	this.y = Math.sqrt((Math.pow(this.sizex,2)*0.25)-Math.pow((this.sizex+distance)-(this.sizex*0.5),2))*5+228;
         console.log(this.y);
       }
     } else if(Math.round(this.x) > Math.round(this.go)) {
       this.x -= velocity;
-      if (this.img.src == "https://alangomezpasillas.github.io/img/sorting-algorithms/cube.png") {
+      if (this.img.src == "https://mysticprisma.github.io/img/sorting-algorithms/cube.png") {
 	this.y = -Math.sqrt((Math.pow(this.sizex,2)*0.25)-Math.pow((this.sizex-distance)-(this.sizex*0.5),2))*5+228;
       }
     } else {
@@ -145,7 +145,7 @@ function handleClick(c, e) {
       c.clicked = "less";
     } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 300, 332, 267, 299, rect)) {
       c.clicked = "more";
-    } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 120, 432, 360, 464, rect)) {
+    } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 240, 432, 480, 464, rect)) {
       c.clicked = "credits";
     }
   } else if (c.state == "playing") {
@@ -253,7 +253,7 @@ async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPl
   ctx.font = "48px Arial";
   ctx.clearRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
-  ctx.drawImage(imgCre, 120, 432);
+  ctx.drawImage(imgCre, 240, 432);
   if (c.alg == "bubble"){
     ctx.drawImage(imgBubs, 66, 120);
   } else if (c.alg == "select") {
@@ -323,6 +323,10 @@ async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPl
       arr.nums = arr.nums2;
     }
     return;
+  } else if (c.clicked == "credits") {
+      c.paused = true;
+      ctx.drawImage(imgCred, 0, 0);
+      await pause(c)
   } else {
     c.clicked = "none";
     await sleep(1);
