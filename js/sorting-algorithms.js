@@ -326,7 +326,7 @@ async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPl
   } else {
     c.clicked = "none";
     await sleep(1);
-    await selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, arr, file, c, n, change);
+    await selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPlay, imgLeft, imgRight, imgCre, imgCred, arr, file, c, n, change);
   }
 }
 
