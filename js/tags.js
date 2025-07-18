@@ -2,7 +2,7 @@ function showMysticHeader() {
   document.querySelector('mystic-header').innerHTML = 
   `<div class="flex-box">
     <div id="mystic" class="bordered rounded">
-      <a href="https://alangomezpasillas.github.io">
+      <a href="https://mysticprisma.github.io">
       <img src="img/MysticPrisma.svg" width="64px" height="64px">
       <h1>Mystic Prisma</h1>
       </a>
@@ -30,7 +30,7 @@ function showMysticFooter() {
       <span class="es">Contactanos!</span>
     </h3>
     Email: alangomezpasillas@gmail.com<br><br><b>
-      &copy;Mystic Prisma 2025.
+      Copyright &copy; 2025 Mystic Prisma.
       <span class="en">
         All Rights Reserved.
       </span>
