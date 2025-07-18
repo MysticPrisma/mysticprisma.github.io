@@ -33,10 +33,12 @@ class Bubble {
   }
 
   update(){
-    var path = "https://" + window.location.hostname + window.location.pathname.slice(0,-4) + "img/sorting-algorithms/cube.png";
+    const [site, rest] = window.location.href.split("/play");
+    var path = site + "/img/sorting-algorithms/cube.png";
     var distance = this.x-this.go;
     var velocity = distance-(distance*this.spd);
     console.log(path);
+    console.log(this.img.src);
     if (Math.round(this.x) < Math.round(this.go)) {
       this.x -= velocity;
       if (this.img.src == path) {
@@ -45,7 +47,7 @@ class Bubble {
       }
     } else if(Math.round(this.x) > Math.round(this.go)) {
       this.x -= velocity;
-      if (this.img.src == "https://mysticprisma.github.io/img/sorting-algorithms/cube.png") {
+      if (this.img.src == path){
 	this.y = -Math.sqrt((Math.pow(this.sizex,2)*0.25)-Math.pow((this.sizex-distance)-(this.sizex*0.5),2))*5+228;
       }
     } else {
@@ -114,7 +116,7 @@ function isClicked(px, py, x1, x2, y1, y2, rect) {
 
 function handleClick(c, e) {
   var rect = e.currentTarget.getBoundingClientRect();
-  if (c.state == "presentation" || c.state == "done") {
+  if (c.state == "presentation" || c.state == "done" || c.clicked == "credits") {
     if (c.paused) {
       c.paused = false;
     }
@@ -145,7 +147,7 @@ function handleClick(c, e) {
       c.clicked = "less";
     } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 300, 332, 267, 299, rect)) {
       c.clicked = "more";
-    } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 240, 432, 480, 464, rect)) {
+    } else if (isClicked(e.clientX-rect.left, e.clientY-rect.top, 200, 440, 432, 464, rect)) {
       c.clicked = "credits";
     }
   } else if (c.state == "playing") {
@@ -253,7 +255,7 @@ async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPl
   ctx.font = "48px Arial";
   ctx.clearRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
-  ctx.drawImage(imgCre, 240, 432);
+  ctx.drawImage(imgCre, 200, 432);
   if (c.alg == "bubble"){
     ctx.drawImage(imgBubs, 66, 120);
   } else if (c.alg == "select") {
@@ -317,16 +319,17 @@ async function selectAlg(ctx, imgBubs, imgSele, imgInse, imgFils, imgRand, imgPl
       }
     }
   }
+  if (c.clicked == "credits") {
+      c.paused = true;
+      ctx.drawImage(imgCred, 0, 0);
+      await pause(c);
+  }
   if (c.clicked == "play" && (arr.n > 0 || c.method == "random")) {
     if (c.method == "random") {
       arr.n = n;
       arr.nums = arr.nums2;
     }
     return;
-  } else if (c.clicked == "credits") {
-      c.paused = true;
-      ctx.drawImage(imgCred, 0, 0);
-      await pause(c)
   } else {
     c.clicked = "none";
     await sleep(1);
