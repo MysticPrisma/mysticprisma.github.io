@@ -72,6 +72,10 @@ header {
   margin-top: 0px;
 }
 
+ins.adsbygoogle[data-ad-status="unfilled"] {
+    display: none !important;
+}
+
 .bordered {
   border: 4px solid cyan;
 }
