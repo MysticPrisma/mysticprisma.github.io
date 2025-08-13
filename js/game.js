@@ -72,6 +72,17 @@ function getAttr(game, attr) {
       magic = `<canvas id="game" class="bordered rounded" width="640" height="480"></canvas>`;
       execute = `let js = document.createElement("script");js.type = "text/javascript";js.src = "js/sorting-algorithms.js";document.body.appendChild(js);`;
       break;
+    case "four-for-flag":
+      name = ["Four for Flag","Cuatro por la Bandera"];
+      desc = [`Get the flag that's the goal, that's what everyone wants, four player
+	       combats are always being performed, to get the glory.`,
+              `Consigue la bandera, es lo que todos buscan, combates de cuatro 
+	       jugadores se ejecutan, para conseguir la gloria.`];
+      cont = [["Player 1: A S D W","Player 2: UP DOWN LEFT RIGHT"],["Jugador 1: A S D W","Jugador 2: UP DOWN LEFT RIGHT"]];
+      magic = `<canvas id="game" class="bordered rounded" width="640" height="640"></canvas>`;
+      execute = `let js = document.createElement("script");js.type = "text/javascript";js.src = "js/four-for-flag.js";document.body.appendChild(js);`;
+      break;
+
   }
   switch (attr){
     case "name": return name[la];
