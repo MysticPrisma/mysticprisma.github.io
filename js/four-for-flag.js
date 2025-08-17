@@ -2,7 +2,7 @@ const SCR_WIDTH = 640;
 const SCR_HEIGHT = 640;
 const FPS = 1000/100;
 const TILE_SIZE = 16;
-const GRID = true;
+const GRID = false;
 
 class Player {
   constructor(spr,x,y){
@@ -127,7 +127,7 @@ function hKeyDown(objPlayers, e){
 	break;
     }
   }
-  //console.log(objPlayers.p1.input);
+  console.log(objPlayers.p1.input);
   e.preventDefault()
 }
 
@@ -135,16 +135,20 @@ function hKeyUp(objPlayers, e){
   var code = e.keyCode;
   switch(code){
     case 65:
-      objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("left"),1);
+      if(objPlayers.p1.input.indexOf("left")!=-1)
+	objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("left"),1);
       break;
     case 68:
-      objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("right"),1);
+      if(objPlayers.p1.input.indexOf("right")!=-1)
+	objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("right"),1);
       break;
     case 87:
-      objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("up"),1);
+      if(objPlayers.p1.input.indexOf("up")!=-1)
+        objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("up"),1);
       break;
     case 83:
-      objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("down"),1);
+      if(objPlayers.p1.input.indexOf("down")!=-1)
+        objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("down"),1);
       break;
   }
   //console.log(objPlayers.p1.input);
