@@ -80,7 +80,8 @@ function getAttr(game, attr) {
 	       jugadores se ejecutan, para conseguir la gloria.`];
       cont = [["Player 1: A S D W","Player 2: UP DOWN LEFT RIGHT"],["Jugador 1: A S D W","Jugador 2: UP DOWN LEFT RIGHT"]];
       magic = `<canvas id="game" class="bordered rounded" width="640" height="640"></canvas>`;
-      execute = `let js = document.createElement("script");js.type = "text/javascript";js.src = "js/four-for-flag.js";document.body.appendChild(js);`;
+      execute = `let js2 = document.createElement("script");js2.type = "text/javascript";js2.src = "js/levels/levels.js";document.body.appendChild(js2);
+		 let js = document.createElement("script");js.type = "text/javascript";js.src = "js/four-for-flag.js";document.body.appendChild(js);`;
       break;
 
   }

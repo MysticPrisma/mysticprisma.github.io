@@ -110,7 +110,7 @@ async function sleep(ms){
 
 function hKeyDown(objPlayers, e){
   var code = e.keyCode;
-  //console.log(code);
+  console.log(code);
   if(!e.repeat){
     switch(code){
       case 65:
@@ -125,9 +125,21 @@ function hKeyDown(objPlayers, e){
       case 83:
 	if(objPlayers.p1.input.at(-1)!="down") objPlayers.p1.input.push("down"); 
 	break;
+      case 37:
+	if(objPlayers.p2.input.at(-1)!="left") objPlayers.p2.input.push("left");
+	break;
+      case 39:
+	if(objPlayers.p2.input.at(-1)!="right") objPlayers.p2.input.push("right");
+	break;
+      case 38:
+	if(objPlayers.p2.input.at(-1)!="up") objPlayers.p2.input.push("up");
+	break;
+      case 40:
+	if(objPlayers.p2.input.at(-1)!="down") objPlayers.p2.input.push("down"); 
+	break;
     }
   }
-  console.log(objPlayers.p1.input);
+  //console.log(objPlayers.p1.input);
   e.preventDefault()
 }
 
@@ -150,6 +162,22 @@ function hKeyUp(objPlayers, e){
       if(objPlayers.p1.input.indexOf("down")!=-1)
         objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("down"),1);
       break;
+    case 37:
+      if(objPlayers.p2.input.indexOf("left")!=-1)
+	objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("left"),1);
+      break;
+    case 39:
+      if(objPlayers.p2.input.indexOf("right")!=-1)
+	objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("right"),1);
+      break;
+    case 38:
+      if(objPlayers.p2.input.indexOf("up")!=-1)
+        objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("up"),1);
+      break;
+    case 40:
+      if(objPlayers.p2.input.indexOf("down")!=-1)
+        objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("down"),1);
+      break;
   }
   //console.log(objPlayers.p1.input);
   e.preventDefault();
@@ -171,10 +199,11 @@ function drawGrid(ctx){
   }
 }
 
-async function combat(ctx, backColor, p1, walls){
+async function combat(ctx, backColor, players, walls, back){
   ctx.fillStyle = backColor;
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   if (GRID) await drawGrid(ctx);
+  await ctx.drawImage(back, 0, 0);
   //cube1.draw(ctx);
   for(let i=0;i<(SCR_WIDTH/TILE_SIZE);i++){
     for(let j=0;j<(SCR_HEIGHT/TILE_SIZE);j++){
@@ -185,10 +214,11 @@ async function combat(ctx, backColor, p1, walls){
     }
   }
 
-  p1.update(ctx,walls);
+  players.p1.update(ctx,walls);
+  players.p2.update(ctx,walls);
 
   await sleep(FPS);
-  await combat(ctx, backColor, p1, walls);
+  await combat(ctx, backColor, players, walls, back);
 }
 
 async function main(){
@@ -200,23 +230,41 @@ async function main(){
   
   const objWalls = Array.from({length:(SCR_WIDTH/TILE_SIZE)}, () => new Array((SCR_HEIGHT/TILE_SIZE)).fill("none"));
   const imgCube = new Image();
+  const imgCube0 = new Image();
+  const imgCube2 = new Image();
   const imgWall = new Image();
+  const imgBack = new Image();
   imgCube.src = path + "CubeBeta.png";
+  imgCube0.src = path + "CubeBeta0.png";
+  imgCube2.src = path + "CubeBeta2.png";
   imgWall.src = path + "WallBeta.png";
+  imgBack.src = path + "imgBack.webp";
   await imgCube.decode();
+  await imgCube0.decode();
+  await imgCube2.decode();
   await imgWall.decode();
+  await imgBack.decode();
   
-  const objPlayers = {p1: "none"};
+  const objPlayers = {p1: "none", p2: "none"};
   
   document.removeEventListener("keydown", preventKeyboardScroll, false);
   window.addEventListener("keydown", (e) => hKeyDown(objPlayers, e), false);
   window.addEventListener("keyup", (e) => hKeyUp(objPlayers, e), false);
 
-
-
   while(true){
+    for(let i = 0; i < (SCR_WIDTH/TILE_SIZE); i++){
+      for(let j = 0; j < (SCR_WIDTH/TILE_SIZE); j++){
+	//console.log(levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j]);
+	if(levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j] == '@'){
+	  let cube = new Wall(imgCube0, j, i);
+	  objWalls[j][i] = cube;
+	}
+      }
+    }
+
     player1 = new Player(imgCube, 64, 64);
-    cube1 = new Wall(imgWall, 1, 1);
+    player2 = new Player(imgCube2, SCR_WIDTH-64, 64);
+    /*cube1 = new Wall(imgWall, 1, 1);
     cube2 = new Wall(imgWall, 1, 2);
     cube3 = new Wall(imgWall, 1, 3);
     cube4 = new Wall(imgWall, 1, 4);
@@ -238,10 +286,11 @@ async function main(){
     objWalls[cube8.x][cube8.y] = cube8;
     objWalls[cube9.x][cube9.y] = cube9;
     objWalls[cube10.x][cube10.y] = cube10;
-    objWalls[cube11.x][cube11.y] = cube11;
+    objWalls[cube11.x][cube11.y] = cube11;*/
 
     objPlayers.p1 = player1;
-    await combat(ctx, backColor, player1, objWalls);
+    objPlayers.p2 = player2;
+    await combat(ctx, backColor, objPlayers, objWalls, imgBack);
   }
 }
 
