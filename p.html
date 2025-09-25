@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>KaiOS Dev Menu</title>
+</head>
+<body>
+  <h1>Activate Developer Mode in KaiOS</h1>
+  <button onclick="openDevMenu()">Activate =)</button>
+
+  <script>
+    function openDevMenu() {
+      try {
+        new MozActivity({
+          name: "configure",
+          data: {
+            target: "device",
+            section: "developer"
+          }
+        });
+      } catch(e) {
+        alert("An error has ocurred: " + e);
+      }
+    }
+  </script>
+</body>
+</html>
+
