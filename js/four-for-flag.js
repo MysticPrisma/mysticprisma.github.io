@@ -1,6 +1,6 @@
 const SCR_WIDTH = 640;
 const SCR_HEIGHT = 640;
-const FPS = 1000/100;
+const FPS = 1000/200;
 const TILE_SIZE = 16;
 const GRID = false;
 
@@ -58,33 +58,33 @@ class Player {
     if(this.left){
       switch(this.state){
 	case "left": 
-	  if(!this.collisions[0]){
-	    this.x--;
-	  }else{
-	    this.left=1;
-	  }
-	  break;
+		if(!this.collisions[0]){
+			this.x--;
+		}else{
+			this.left=1;
+		}
+		break;
 	case "right": 
-	  if(!this.collisions[1]){
-	    this.x++;
-	  }else{
-	    this.left=1;
-	  }
-	  break;
+		if(!this.collisions[1]){
+			this.x++;
+		}else{
+			this.left=1;
+		}
+		break;
 	case "up": 
-	  if(!this.collisions[2]){
-	    this.y--;
-	  }else{
-	    this.left=1;
-	  }
-	  break;
+		if(!this.collisions[2]){
+			this.y--;
+		}else{
+			this.left=1;
+		}
+		break;
 	case "down": 
-	  if(!this.collisions[3]){
-	    this.y++;
-	  }else{
-	    this.left=1;
-	  }
-	  break;
+		if(!this.collisions[3]){
+			this.y++;
+		}else{
+			this.left=1;
+		}
+		break;
       }
       this.left--;
     }
@@ -93,14 +93,30 @@ class Player {
 }
 
 class Wall {
-  constructor(spr,x,y){
+  constructor(spr, x, y, inum){
     this.spr = spr;
     this.x = x;
     this.y = y;
+		this.inum;
+		this.sx = (inum % 5);
+		this.sy = Math.floor(inum/5);
+		console.log(this.sx);
+		console.log(this.sy);
   }
 
   draw(ctx){
-    ctx.drawImage(this.spr,this.x*TILE_SIZE,this.y*TILE_SIZE);
+    //ctx.drawImage(this.spr, this.x*TILE_SIZE, this.y*TILE_SIZE);
+		ctx.drawImage(
+			this.spr, 
+			this.sx*TILE_SIZE, 
+			this.sy*TILE_SIZE, 
+			TILE_SIZE, 
+			TILE_SIZE, 
+			this.x*TILE_SIZE, 
+			this.y*TILE_SIZE,
+			TILE_SIZE,
+			TILE_SIZE
+		)
   }
 }
 
@@ -199,17 +215,17 @@ function drawGrid(ctx){
   }
 }
 
-async function combat(ctx, backColor, players, walls, back){
+async function combat(ctx, backColor, players, walls){
   ctx.fillStyle = backColor;
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   if (GRID) await drawGrid(ctx);
-  await ctx.drawImage(back, 0, 0);
+  //await ctx.drawImage(back, 0, 0);
   //cube1.draw(ctx);
   for(let i=0;i<(SCR_WIDTH/TILE_SIZE);i++){
     for(let j=0;j<(SCR_HEIGHT/TILE_SIZE);j++){
       if(walls[i][j]!="none"){
 	//console.log(i,j);
-	walls[i][j].draw(ctx);
+		walls[i][j].draw(ctx);
       }
     }
   }
@@ -218,7 +234,7 @@ async function combat(ctx, backColor, players, walls, back){
   players.p2.update(ctx,walls);
 
   await sleep(FPS);
-  await combat(ctx, backColor, players, walls, back);
+  await combat(ctx, backColor, players, walls);
 }
 
 async function main(){
@@ -226,24 +242,27 @@ async function main(){
   const path = "img/four-for-flag/";
   const ctx = canvas.getContext('2d');
   
-  var backColor = "white";
+  var backColor = "black";
   
   const objWalls = Array.from({length:(SCR_WIDTH/TILE_SIZE)}, () => new Array((SCR_HEIGHT/TILE_SIZE)).fill("none"));
   const imgCube = new Image();
   const imgCube0 = new Image();
   const imgCube2 = new Image();
   const imgWall = new Image();
-  const imgBack = new Image();
-  imgCube.src = path + "CubeBeta.png";
-  imgCube0.src = path + "CubeBeta0.png";
-  imgCube2.src = path + "CubeBeta2.png";
-  imgWall.src = path + "WallBeta.png";
-  imgBack.src = path + "imgBack.webp";
+  const imgLevel1 = new Image();
+  //const imgBack = new Image();
+	
+  imgCube.src = path + "cubes/blue-cube.png";
+  imgCube2.src = path + "cubes/pink-cube.png";
+  imgWall.src = path + "walls/cube-white.png";
+  imgLevel1.src = path + "walls/level1.png";
+  //imgBack.src = path + "imgBack.webp";
   await imgCube.decode();
-  await imgCube0.decode();
+  //await imgCube0.decode();
   await imgCube2.decode();
   await imgWall.decode();
-  await imgBack.decode();
+  await imgLevel1.decode();
+  //await imgBack.decode();
   
   const objPlayers = {p1: "none", p2: "none"};
   
@@ -255,42 +274,22 @@ async function main(){
     for(let i = 0; i < (SCR_WIDTH/TILE_SIZE); i++){
       for(let j = 0; j < (SCR_WIDTH/TILE_SIZE); j++){
 	//console.log(levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j]);
-	if(levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j] == '@'){
-	  let cube = new Wall(imgCube0, j, i);
-	  objWalls[j][i] = cube;
+		let wall = levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j];
+			if(wall != ' '){
+				let inum = wall.charCodeAt(0) - 'a'.charCodeAt(0);
+				console.log(inum);
+				let cube = new Wall(imgLevel1, j, i, inum);
+				objWalls[j][i] = cube;
+			}
+		}
 	}
-      }
-    }
 
-    player1 = new Player(imgCube, 64, 64);
-    player2 = new Player(imgCube2, SCR_WIDTH-64, 64);
-    /*cube1 = new Wall(imgWall, 1, 1);
-    cube2 = new Wall(imgWall, 1, 2);
-    cube3 = new Wall(imgWall, 1, 3);
-    cube4 = new Wall(imgWall, 1, 4);
-    cube5 = new Wall(imgWall, 2, 1);
-    cube6 = new Wall(imgWall, 3, 1);
-    cube7 = new Wall(imgWall, 4, 1);
-    cube8 = new Wall(imgWall, 5, 5);
-    cube9 = new Wall(imgWall, 5, 6);
-    cube10 = new Wall(imgWall, 6, 5);
-    cube11 = new Wall(imgWall, 6, 6);
-    
-    objWalls[cube1.x][cube1.y] = cube1;
-    objWalls[cube2.x][cube2.y] = cube2;
-    objWalls[cube3.x][cube3.y] = cube3;
-    objWalls[cube4.x][cube4.y] = cube4;
-    objWalls[cube5.x][cube5.y] = cube5;
-    objWalls[cube6.x][cube6.y] = cube6;
-    objWalls[cube7.x][cube7.y] = cube7;
-    objWalls[cube8.x][cube8.y] = cube8;
-    objWalls[cube9.x][cube9.y] = cube9;
-    objWalls[cube10.x][cube10.y] = cube10;
-    objWalls[cube11.x][cube11.y] = cube11;*/
+    player1 = new Player(imgCube, 48, 48);
+    player2 = new Player(imgCube2, SCR_WIDTH-64, 48);
 
     objPlayers.p1 = player1;
     objPlayers.p2 = player2;
-    await combat(ctx, backColor, objPlayers, objWalls, imgBack);
+    await combat(ctx, backColor, objPlayers, objWalls);
   }
 }
 
