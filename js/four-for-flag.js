@@ -1,6 +1,6 @@
 const SCR_WIDTH = 640;
 const SCR_HEIGHT = 640;
-const FPS = 1000/200;
+const FPS = 1000/300;
 const TILE_SIZE = 16;
 const GRID = false;
 
@@ -47,44 +47,44 @@ class Player {
     }
   }
 
-  update(ctx, walls){
+  update(ctx, walls, objects){
     if(!this.left){
       this.state = this.input.at(-1);
       if(this.input != "idle"){
         this.left = 16;
-	this.checkCollision(walls);
+        this.checkCollision(walls);
       }
     }
     if(this.left){
       switch(this.state){
-	case "left": 
-		if(!this.collisions[0]){
-			this.x--;
-		}else{
-			this.left=1;
-		}
-		break;
-	case "right": 
-		if(!this.collisions[1]){
-			this.x++;
-		}else{
-			this.left=1;
-		}
-		break;
-	case "up": 
-		if(!this.collisions[2]){
-			this.y--;
-		}else{
-			this.left=1;
-		}
-		break;
-	case "down": 
-		if(!this.collisions[3]){
-			this.y++;
-		}else{
-			this.left=1;
-		}
-		break;
+        case "left": 
+          if(!this.collisions[0]){
+            this.x--;
+          }else{
+            this.left=1;
+          }
+          break;
+        case "right": 
+          if(!this.collisions[1]){
+            this.x++;
+          }else{
+            this.left=1;
+          }
+          break;
+        case "up": 
+          if(!this.collisions[2]){
+            this.y--;
+          }else{
+            this.left=1;
+          }
+          break;
+        case "down": 
+          if(!this.collisions[3]){
+            this.y++;
+          }else{
+            this.left=1;
+          }
+          break;
       }
       this.left--;
     }
@@ -107,16 +107,43 @@ class Wall {
   draw(ctx){
     //ctx.drawImage(this.spr, this.x*TILE_SIZE, this.y*TILE_SIZE);
 		ctx.drawImage(
-			this.spr, 
-			this.sx*TILE_SIZE, 
-			this.sy*TILE_SIZE, 
-			TILE_SIZE, 
-			TILE_SIZE, 
-			this.x*TILE_SIZE, 
-			this.y*TILE_SIZE,
-			TILE_SIZE,
-			TILE_SIZE
+      this.spr, 
+      this.sx*TILE_SIZE, 
+      this.sy*TILE_SIZE, 
+      TILE_SIZE, 
+      TILE_SIZE, 
+      this.x*TILE_SIZE, 
+      this.y*TILE_SIZE,
+      TILE_SIZE,
+      TILE_SIZE
 		)
+  }
+}
+
+class Path {
+  constructor(x,y,w,h,color){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.a = 1.00;
+    this.done = false;
+    this.color = color;
+  }
+
+  draw(ctx){
+    ctx.globalAlpha = this.a;
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x,this.y,this.w,this.h);
+  }
+
+  update(ctx){
+    if(this.a <= 0.01){
+      this.done=true;
+    } else {
+      this.a -= 0.02;
+    }
+    this.draw(ctx);
   }
 }
 
@@ -130,29 +157,29 @@ function hKeyDown(objPlayers, e){
   if(!e.repeat){
     switch(code){
       case 65:
-	if(objPlayers.p1.input.at(-1)!="left") objPlayers.p1.input.push("left");
-	break;
+      	if(objPlayers.p1.input.at(-1)!="left") objPlayers.p1.input.push("left");
+      	break;
       case 68:
-	if(objPlayers.p1.input.at(-1)!="right") objPlayers.p1.input.push("right");
-	break;
+      	if(objPlayers.p1.input.at(-1)!="right") objPlayers.p1.input.push("right");
+      	break;
       case 87:
-	if(objPlayers.p1.input.at(-1)!="up") objPlayers.p1.input.push("up");
-	break;
+      	if(objPlayers.p1.input.at(-1)!="up") objPlayers.p1.input.push("up");
+      	break;
       case 83:
-	if(objPlayers.p1.input.at(-1)!="down") objPlayers.p1.input.push("down"); 
-	break;
+      	if(objPlayers.p1.input.at(-1)!="down") objPlayers.p1.input.push("down"); 
+      	break;
       case 37:
-	if(objPlayers.p2.input.at(-1)!="left") objPlayers.p2.input.push("left");
-	break;
+      	if(objPlayers.p2.input.at(-1)!="left") objPlayers.p2.input.push("left");
+      	break;
       case 39:
-	if(objPlayers.p2.input.at(-1)!="right") objPlayers.p2.input.push("right");
-	break;
+      	if(objPlayers.p2.input.at(-1)!="right") objPlayers.p2.input.push("right");
+      	break;
       case 38:
-	if(objPlayers.p2.input.at(-1)!="up") objPlayers.p2.input.push("up");
-	break;
+	      if(objPlayers.p2.input.at(-1)!="up") objPlayers.p2.input.push("up");
+	      break;
       case 40:
-	if(objPlayers.p2.input.at(-1)!="down") objPlayers.p2.input.push("down"); 
-	break;
+	      if(objPlayers.p2.input.at(-1)!="down") objPlayers.p2.input.push("down"); 
+    	  break;
     }
   }
   //console.log(objPlayers.p1.input);
@@ -164,11 +191,11 @@ function hKeyUp(objPlayers, e){
   switch(code){
     case 65:
       if(objPlayers.p1.input.indexOf("left")!=-1)
-	objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("left"),1);
+        objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("left"),1);
       break;
     case 68:
       if(objPlayers.p1.input.indexOf("right")!=-1)
-	objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("right"),1);
+        objPlayers.p1.input.splice(objPlayers.p1.input.indexOf("right"),1);
       break;
     case 87:
       if(objPlayers.p1.input.indexOf("up")!=-1)
@@ -180,11 +207,11 @@ function hKeyUp(objPlayers, e){
       break;
     case 37:
       if(objPlayers.p2.input.indexOf("left")!=-1)
-	objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("left"),1);
+        objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("left"),1);
       break;
     case 39:
       if(objPlayers.p2.input.indexOf("right")!=-1)
-	objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("right"),1);
+        objPlayers.p2.input.splice(objPlayers.p2.input.indexOf("right"),1);
       break;
     case 38:
       if(objPlayers.p2.input.indexOf("up")!=-1)
@@ -200,6 +227,7 @@ function hKeyUp(objPlayers, e){
 }
 
 function drawGrid(ctx){
+  ctx.globalAlpha = 1;
   ctx.fillStyle = "black";
   for(let i = 16; i < SCR_WIDTH; i += 16){
     ctx.beginPath();
@@ -215,7 +243,17 @@ function drawGrid(ctx){
   }
 }
 
-async function combat(ctx, backColor, players, walls){
+function updateObjects(ctx, objects){
+  for(let i = objects.length-1; i >= 0; i--){
+    objects[i].update(ctx);
+    if(objects[i].done){
+      objects.splice(i, 1);
+    }
+  }
+}
+
+async function combat(ctx, backColor, players, walls, objects, time){
+  ctx.globalAlpha = 1;
   ctx.fillStyle = backColor;
   ctx.fillRect(0, 0, SCR_WIDTH, SCR_HEIGHT);
   if (GRID) await drawGrid(ctx);
@@ -225,16 +263,29 @@ async function combat(ctx, backColor, players, walls){
     for(let j=0;j<(SCR_HEIGHT/TILE_SIZE);j++){
       if(walls[i][j]!="none"){
 	//console.log(i,j);
-		walls[i][j].draw(ctx);
+        walls[i][j].draw(ctx);
       }
     }
   }
+  
+  if (time == 5) {
+    const pathP1 = new Path(players.p1.x,players.p1.y,TILE_SIZE,TILE_SIZE,"cyan");
+    const pathP2 = new Path(players.p2.x,players.p2.y,TILE_SIZE,TILE_SIZE,"pink");
+    objects.push(pathP1);
+    objects.push(pathP2);
+    time = 0;
+  }
 
-  players.p1.update(ctx,walls);
-  players.p2.update(ctx,walls);
+  updateObjects(ctx, objects)
+
+  ctx.globalAlpha = 1;
+  players.p1.update(ctx,walls,objects);
+  players.p2.update(ctx,walls,objects);
+
+  time++;
 
   await sleep(FPS);
-  await combat(ctx, backColor, players, walls);
+  await combat(ctx, backColor, players, walls, objects, time);
 }
 
 async function main(){
@@ -245,6 +296,7 @@ async function main(){
   var backColor = "black";
   
   const objWalls = Array.from({length:(SCR_WIDTH/TILE_SIZE)}, () => new Array((SCR_HEIGHT/TILE_SIZE)).fill("none"));
+  const objects = new Array();
   const imgCube = new Image();
   const imgCube0 = new Image();
   const imgCube2 = new Image();
@@ -274,22 +326,22 @@ async function main(){
     for(let i = 0; i < (SCR_WIDTH/TILE_SIZE); i++){
       for(let j = 0; j < (SCR_WIDTH/TILE_SIZE); j++){
 	//console.log(levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j]);
-		let wall = levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j];
-			if(wall != ' '){
-				let inum = wall.charCodeAt(0) - 'a'.charCodeAt(0);
-				console.log(inum);
-				let cube = new Wall(imgLevel1, j, i, inum);
-				objWalls[j][i] = cube;
-			}
-		}
-	}
+        let wall = levels[0][(i*(SCR_WIDTH/TILE_SIZE))+j];
+        if(wall != ' '){
+          let inum = wall.charCodeAt(0) - 'a'.charCodeAt(0);
+          console.log(inum);
+          let cube = new Wall(imgLevel1, j, i, inum);
+          objWalls[j][i] = cube;
+        }
+      }
+    }
 
     player1 = new Player(imgCube, 48, 48);
     player2 = new Player(imgCube2, SCR_WIDTH-64, 48);
 
     objPlayers.p1 = player1;
     objPlayers.p2 = player2;
-    await combat(ctx, backColor, objPlayers, objWalls);
+    await combat(ctx, backColor, objPlayers, objWalls, objects, 0);
   }
 }
 
