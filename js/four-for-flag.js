@@ -12,6 +12,7 @@ class Player {
     this.input = new Array();
     this.input.push("idle");
     this.state = this.input.at(-1);
+	this.prev = this.input.at(-1);
     this.left = 0;
     this.collisions = [false,false,false,false];
   }
@@ -50,6 +51,9 @@ class Player {
   update(ctx, walls, objects){
     if(!this.left){
       this.state = this.input.at(-1);
+      if(this.state == this.prev && this.input.length > 2){
+        this.state = this.input.at(-2);
+      }
       if(this.input != "idle"){
         this.left = 16;
         this.checkCollision(walls);
@@ -87,6 +91,7 @@ class Player {
           break;
       }
       this.left--;
+      this.prev = this.state;
     }
     this.draw(ctx);
   }
@@ -182,7 +187,7 @@ function hKeyDown(objPlayers, e){
     	  break;
     }
   }
-  //console.log(objPlayers.p1.input);
+  console.log(objPlayers.p1.input);
   e.preventDefault()
 }
 
