@@ -1,18 +1,19 @@
 const SCR_WIDTH = 640;
 const SCR_HEIGHT = 640;
-const FPS = 1000/300;
+const FPS = 1000/200;
 const TILE_SIZE = 16;
 const GRID = false;
 
 class Player {
-  constructor(spr,x,y){
+  constructor(spr,x,y,color){
     this.spr = spr;
     this.x = x;
     this.y = y;
+    this.color = color;
     this.input = new Array();
     this.input.push("idle");
     this.state = this.input.at(-1);
-	this.prev = this.input.at(-1);
+    this.prev = this.input.at(-1);
     this.left = 0;
     this.collisions = [false,false,false,false];
   }
@@ -152,6 +153,32 @@ class Path {
   }
 }
 
+class Flag {
+  constructor(spr, x, y){
+    this.spr = spr;
+    this.x = x;
+    this.y = y;
+    this.done = false;
+  }
+	
+  draw(ctx){
+    ctx.globalAlpha = 1;
+    ctx.drawImage(this.spr,this.x,this.y);
+  }
+
+  update(ctx,players){
+    this.draw(ctx);
+    if(players.p1.x == this.x && players.p1.y == this.y){
+      players.p1.color = "yellow";
+      this.done = true;
+    }
+    else if(players.p2.x == this.x && players.p2.y == this.y){
+      players.p2.color = "yellow";
+      this.done = true;
+    }
+  }
+}
+
 async function sleep(ms){
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -248,9 +275,14 @@ function drawGrid(ctx){
   }
 }
 
-function updateObjects(ctx, objects){
+function updateObjects(ctx, objects, players){
   for(let i = objects.length-1; i >= 0; i--){
-    objects[i].update(ctx);
+    //console.log(objects[i].constructor.name);
+    if(objects[i].constructor.name==="Flag"){
+      objects[i].update(ctx,players);
+    }else{
+      objects[i].update(ctx);
+    }
     if(objects[i].done){
       objects.splice(i, 1);
     }
@@ -273,15 +305,15 @@ async function combat(ctx, backColor, players, walls, objects, time){
     }
   }
   
-  if (time == 5) {
-    const pathP1 = new Path(players.p1.x,players.p1.y,TILE_SIZE,TILE_SIZE,"cyan");
-    const pathP2 = new Path(players.p2.x,players.p2.y,TILE_SIZE,TILE_SIZE,"pink");
+  if (time == 3) {
+    const pathP1 = new Path(players.p1.x,players.p1.y,TILE_SIZE,TILE_SIZE,players.p1.color);
+    const pathP2 = new Path(players.p2.x,players.p2.y,TILE_SIZE,TILE_SIZE,players.p2.color);
     objects.push(pathP1);
     objects.push(pathP2);
     time = 0;
   }
 
-  updateObjects(ctx, objects)
+  updateObjects(ctx, objects, players);
 
   ctx.globalAlpha = 1;
   players.p1.update(ctx,walls,objects);
@@ -307,18 +339,21 @@ async function main(){
   const imgCube2 = new Image();
   const imgWall = new Image();
   const imgLevel1 = new Image();
+  const imgFlag = new Image();
   //const imgBack = new Image();
 	
   imgCube.src = path + "cubes/blue-cube.png";
   imgCube2.src = path + "cubes/pink-cube.png";
   imgWall.src = path + "walls/cube-white.png";
   imgLevel1.src = path + "walls/level1.png";
+  imgFlag.src = path + "flag.png";
   //imgBack.src = path + "imgBack.webp";
   await imgCube.decode();
   //await imgCube0.decode();
   await imgCube2.decode();
   await imgWall.decode();
   await imgLevel1.decode();
+  await imgFlag.decode();
   //await imgBack.decode();
   
   const objPlayers = {p1: "none", p2: "none"};
@@ -341,8 +376,11 @@ async function main(){
       }
     }
 
-    player1 = new Player(imgCube, 48, 48);
-    player2 = new Player(imgCube2, SCR_WIDTH-64, 48);
+    player1 = new Player(imgCube, 48, 48, "cyan");
+    player2 = new Player(imgCube2, SCR_WIDTH-64, 48, "pink");
+    
+    flag = new Flag(imgFlag, 320, 320);
+    objects.push(flag);
 
     objPlayers.p1 = player1;
     objPlayers.p2 = player2;
