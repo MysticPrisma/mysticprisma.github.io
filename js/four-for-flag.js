@@ -1,6 +1,6 @@
 const SCR_WIDTH = 640;
 const SCR_HEIGHT = 640;
-const FPS = 1000/320;
+const FPS = 1000/300;
 const TILE_SIZE = 16;
 const GRID = false;
 
